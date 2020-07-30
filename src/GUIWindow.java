@@ -1,3 +1,5 @@
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,46 +10,27 @@ import javax.swing.*;
 
 public class GUIWindow extends JFrame {
     private final JPanel panel;
-    private final JLabel ipLabel;
-    private final JTextField ipField;
-    private final JLabel worldIDLabel;
-    private final JTextField worldIDField;
-    private final JLabel passwordLabel;
-    private final JTextField passwordField;
-    private final JLabel dbNameLabel;
-    private final JTextField dbNameField;
-    private final JLabel managementDBNameLabel;
-    private final JTextField managementDBNameField;
-    private final JButton button;
-    private final JLabel doneLabel;
+    private JLabel ipLabel;
+    private JTextField ipField;
+    private JLabel worldIDLabel;
+    private JTextField worldIDField;
+    private JLabel passwordLabel;
+    private JTextField passwordField;
+    private JLabel dbNameLabel;
+    private JTextField dbNameField;
+    private JLabel managementDBNameLabel;
+    private JTextField managementDBNameField;
+    private JButton button;
+    private JButton infoButton;
     private final String IPV4_PATTERN = "^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$";
     private final String NUM_PATTERN = "\\d+";
 
     public GUIWindow() {
         panel = new JPanel();
-        ipLabel = new JLabel();
-        ipField = new JTextField(30);
-        worldIDLabel = new JLabel();
-        worldIDField = new JTextField(30);
-        passwordLabel = new JLabel();
-        passwordField = new JPasswordField(30);
-        dbNameLabel = new JLabel();
-        dbNameField = new JTextField(30);
-        managementDBNameLabel = new JLabel();
-        managementDBNameField = new JTextField(30);
-        button = new JButton();
-        doneLabel = new JLabel();
-        ipLabel.setText("Enter IP Here:");
-        worldIDLabel.setText("Enter World ID Here:");
-        passwordLabel.setText("Enter Password Here:");
-        dbNameLabel.setText("Enter DB Name Here:");
-        managementDBNameLabel.setText("Enter Management DB Name Here:");
-        button.setText("Generate");
-        doneLabel.setText("Done!");
-        doneLabel.setVisible(false);
-        setTitle("ServerDBDatGen");
+        initializeComponents();
+        setTitle("BnSDBDatGen");
         setVisible(true);
-        setSize(400, 400);
+        setSize(400, 325);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         button.addActionListener(e -> {
             if (!ipField.getText().matches(IPV4_PATTERN)) {
@@ -60,10 +43,32 @@ public class GUIWindow extends JFrame {
             }
             generateManagementDSN();
             generateDBDSN();
-            doneLabel.setVisible(true);
+            try {
+                Desktop.getDesktop().open(new File("."));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         });
+        infoButton.addActionListener(e -> JOptionPane.showMessageDialog(null, "Populate text fields with the indicated information, and click the" +
+                "'Generate' button to create managementd_db_dsn.dat and db_dsn.dat. They will be located in the same directory " +
+                "that this program is located in.\n Source code can be found at: https://github.com/vp-cshow/BnSDBDatGen"));
         populateJPanel();
         add(panel);
+    }
+
+    private void initializeComponents() {
+        ipLabel = new JLabel("Enter IP Here:");
+        ipField = new JTextField(30);
+        worldIDLabel = new JLabel("Enter World ID Here:");
+        worldIDField = new JTextField(30);
+        passwordLabel = new JLabel("Enter Password Here:");
+        passwordField = new JPasswordField(30);
+        dbNameLabel = new JLabel("Enter DB Name Here:");
+        dbNameField = new JTextField(30);
+        managementDBNameLabel = new JLabel("Enter Management DB Name Here:");
+        managementDBNameField = new JTextField(30);
+        button = new JButton("Generate");
+        infoButton = new JButton("Help");
     }
 
     private void populateJPanel() {
@@ -78,7 +83,7 @@ public class GUIWindow extends JFrame {
         panel.add(managementDBNameLabel);
         panel.add(managementDBNameField);
         panel.add(button);
-        panel.add(doneLabel);
+        panel.add(infoButton);
     }
 
     private void generateManagementDSN() {
